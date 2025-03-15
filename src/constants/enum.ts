@@ -4,3 +4,9 @@ export enum SORTING {
     ASC,
     DESC,
 }
+
+export enum FACILITY {
+    SHELTER,
+    FOOD_BANK,
+    MEDICAL
+}
