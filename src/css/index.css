@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:slnt,wght@-10..0,100..900&display=swap');
+
+html {
+  /* this enables some alternative styles and contextual characters to the font */
+  font-feature-settings: 'ss01', 'ss02', 'case', 'salt';
+}
+
 body {
   margin: 0;
 }
