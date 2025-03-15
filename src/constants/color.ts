@@ -4,4 +4,5 @@ export const COLOR = {
     TEXT: '#FFFFFF',
     BLACK: '#3E4958',
     WHITE: '#FFF',
+    RATING: '#FFD700',
 }

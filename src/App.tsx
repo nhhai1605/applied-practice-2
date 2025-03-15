@@ -8,6 +8,9 @@ import {
     ToggleButton,
     Menu,
     IconsProvider,
+    Collection,
+    ScrollView,
+    Badge,
 } from '@aws-amplify/ui-react';
 import {useEffect, useState} from 'react';
 import Map, {Marker, NavigationControl, Source, Layer} from 'react-map-gl';
@@ -16,10 +19,55 @@ import {IMAGE} from './constants/image';
 import {LocationSearch} from '@aws-amplify/ui-react-geo';
 import {LuArrowDown, LuArrowUp, LuSlidersHorizontal} from 'react-icons/lu';
 import {SORTING} from './constants/enum';
+import {AiFillStar} from 'react-icons/ai';
+import { GiFoodTruck } from 'react-icons/gi';
+
 function App() {
     const {tokens} = useTheme();
     const [distanceSort, setDistanceSort] = useState<SORTING>(SORTING.NONE);
     const [ratingSort, setRatingSort] = useState<SORTING>(SORTING.NONE);
+    const [places, setPlaces] = useState<any[]>([
+        {
+            name: 'Place 1',
+            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
+            distance: '1.2km (xxx mins walk)',
+            rating: 4.5,
+            address: 'Address 1, 3xxx, VIC',
+            features: [1, 3, 2, 5, 6, 4]
+        },
+        {
+            name: 'Place 2',
+            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
+            distance: '1.2km (xxx mins walk)',
+            rating: 4.2,
+            address: 'Address 2, 3xxx, VIC',
+            features: [2]
+        },
+        {
+            name: 'Place 3',
+            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
+            distance: '1.2km (xxx mins walk)',
+            rating: 4.8,
+            address: 'Address 3, 3xxx, VIC',
+            features: [3]
+        },
+        {
+            name: 'Place 4',
+            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
+            distance: '1.2km (xxx mins walk)',
+            rating: 4.9,
+            address: 'Address 4, 3xxx, VIC',
+            features: [1, 2]
+        },
+        {
+            name: 'Place 5',
+            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
+            distance: '1.2km (xxx mins walk)',
+            rating: 4.7,
+            address: 'Address 5, 3xxx, VIC',
+            features: [2, 3]
+        },
+    ]);
 
     const controlSorting = (value: SORTING, setValue: any) => {
         if (value === SORTING.NONE) {
@@ -33,11 +81,44 @@ function App() {
         }
     };
 
+    const mockListFeatures = [
+        {
+            id: 1,
+            name: "Offer meals",
+            icon: <GiFoodTruck />
+        },
+        {
+            id: 2,
+            name: "Job agency",
+            icon: <GiFoodTruck />
+        },
+        {
+            id: 3,
+            name: "Long term stay",
+            icon: <GiFoodTruck />
+        },
+        {
+            id: 4,
+            name: "Showers",
+            icon: <GiFoodTruck />
+        },
+        {
+            id: 5,
+            name: "Laundry",
+            icon: <GiFoodTruck />
+        },
+        {
+            id: 6,
+            name: "Medical",
+            icon: <GiFoodTruck />
+        }
+    ]
+
     return (
         <Flex direction="column" gap={0}>
             <Flex
-                backgroundColor={COLOR.WHITE}
                 justifyContent="space-between"
+                backgroundColor={COLOR.WHITE}
                 alignItems="center"
                 height="4rem"
                 padding="0 2rem">
@@ -76,6 +157,9 @@ function App() {
                     direction="column"
                     gap={0}
                     margin="2rem 1rem 2rem 2rem">
+                    {
+                        //#region Header
+                    }
                     <Text
                         fontSize={tokens.fontSizes.medium}
                         fontWeight={tokens.fontWeights.normal}>
@@ -86,6 +170,13 @@ function App() {
                         fontWeight={tokens.fontWeights.bold}>
                         Facilities in Melbourne
                     </Text>
+                    {
+                        //#endregion Header
+                    }
+
+                    {
+                        //#region Filter
+                    }
                     <Flex
                         alignItems={'center'}
                         marginTop={'1rem'}
@@ -134,12 +225,12 @@ function App() {
                                                 )
                                             }>
                                             Distance
-                                            {distanceSort === SORTING.ASC ? 
-                                                <LuArrowUp /> : 
-                                                distanceSort === SORTING.DESC ? 
-                                                <LuArrowDown /> : 
-                                                null
-                                            }
+                                            {distanceSort === SORTING.ASC ? (
+                                                <LuArrowUp />
+                                            ) : distanceSort ===
+                                              SORTING.DESC ? (
+                                                <LuArrowDown />
+                                            ) : null}
                                         </ToggleButton>
                                         <ToggleButton
                                             {...style.toggleButton}
@@ -152,19 +243,121 @@ function App() {
                                                     setRatingSort,
                                                 )
                                             }>
-                                            Rating 
-                                            {ratingSort === SORTING.ASC ? 
-                                                <LuArrowUp /> : 
-                                                ratingSort === SORTING.DESC ? 
-                                                <LuArrowDown /> : 
-                                                null
-                                            }
+                                            Rating
+                                            {ratingSort === SORTING.ASC ? (
+                                                <LuArrowUp />
+                                            ) : ratingSort === SORTING.DESC ? (
+                                                <LuArrowDown />
+                                            ) : null}
                                         </ToggleButton>
                                     </Flex>
                                 </Flex>
                             </Menu>
                         </IconsProvider>
                     </Flex>
+                    {
+                        //#endregion Filter
+                    }
+
+                    {
+                        //#region List
+                    }
+                    <ScrollView marginTop={'1rem'}>
+                        <Collection
+                            items={places}
+                            marginRight={'1rem'}
+                            marginBottom={'1rem'}
+                            type="list"
+                            direction="column"
+                            gap="1rem"
+                            wrap="wrap">
+                            {(item, index) => (
+                                <Card key={index} {...style.placeCard}>
+                                    <Flex
+                                        direction={'row'}
+                                        gap={'1rem'}
+                                        height={'100%'}
+                                        alignItems={'center'}>
+                                        <Image
+                                            src={item.image}
+                                            alt="place image"
+                                            height={'100%'}
+                                            aspectRatio={4 / 3}
+                                            borderRadius={'0.5rem'}
+                                        />
+                                        <Flex
+                                            direction={'column'}
+                                            gap={0}
+                                            height={'100%'}
+                                            width={'100%'}
+                                            padding={'0rem'}>
+                                            <Text
+                                                fontSize={
+                                                    tokens.fontSizes.large
+                                                }
+                                                fontWeight={
+                                                    tokens.fontWeights.bold
+                                                }>
+                                                {item.name}
+                                            </Text>
+                                            <Text
+                                                fontSize={
+                                                    tokens.fontSizes.medium
+                                                }
+                                                fontWeight={
+                                                    tokens.fontWeights.normal
+                                                }>
+                                                {item.address}
+                                            </Text>
+                                            <Text
+                                                fontSize={
+                                                    tokens.fontSizes.medium
+                                                }
+                                                fontWeight={
+                                                    tokens.fontWeights.normal
+                                                }>
+                                                {item.distance}
+                                            </Text>
+                                            <Flex
+                                                alignItems={'center'}
+                                                gap={'0.5rem'}>
+                                                <AiFillStar
+                                                    color={COLOR.RATING}
+                                                />
+                                                <Text
+                                                    fontSize={
+                                                        tokens.fontSizes.medium
+                                                    }
+                                                    fontWeight={
+                                                        tokens.fontWeights
+                                                            .normal
+                                                    }>
+                                                    {item.rating}
+                                                </Text>
+                                            </Flex>
+                                            <ScrollView width={'100%'}>
+                                                <Collection
+                                                    items={mockListFeatures.filter(feature => item.features.includes(feature.id)).map(feature => feature.name)}
+                                                    type="list"
+                                                    direction="row"
+                                                    wrap={'wrap'}
+                                                    gap="0.5rem">
+                                                    {(item, index) => (
+                                                        <Badge size='small' key={index} backgroundColor={COLOR.PRIMARY} color={COLOR.WHITE} borderRadius="0.5rem" >
+                                                            {item}
+                                                        </Badge>
+                                                    )}
+                                                </Collection>
+                                            </ScrollView>
+                                        </Flex>
+                                    </Flex>
+                                </Card>
+                            )}
+                        </Collection>
+                    </ScrollView>
+                    {
+                        //#endregion List
+                    }
                 </Flex>
                 <Card
                     width="100%"
@@ -185,6 +378,14 @@ const style: any = {
         size: 'small',
         variation: 'primary',
         width: '7rem',
+        borderRadius: '0.5rem',
+    },
+    placeCard: {
+        variation: 'elevated',
+        width: '100%',
+        height: '10rem',
+        backgroundColor: COLOR.WHITE,
+        padding: '1rem',
         borderRadius: '0.5rem',
     },
 };
