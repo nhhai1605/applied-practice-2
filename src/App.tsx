@@ -17,52 +17,101 @@ import Map, {Marker, NavigationControl, Source, Layer} from 'react-map-gl';
 import {COLOR} from './constants/color';
 import {IMAGE} from './constants/image';
 import {LocationSearch} from '@aws-amplify/ui-react-geo';
-import {LuArrowDown, LuArrowUp, LuSlidersHorizontal} from 'react-icons/lu';
+import {LuArrowDown, LuArrowUp, LuBuilding, LuShowerHead, LuSlidersHorizontal} from 'react-icons/lu';
 import {SORTING} from './constants/enum';
 import {AiFillStar} from 'react-icons/ai';
-import { GiFoodTruck } from 'react-icons/gi';
+import { MdOutlineFastfood, MdOutlineLocalLaundryService, MdOutlineMedicalServices } from 'react-icons/md';
+import { GoBriefcase } from 'react-icons/go';
 
 function App() {
     const {tokens} = useTheme();
     const [distanceSort, setDistanceSort] = useState<SORTING>(SORTING.NONE);
     const [ratingSort, setRatingSort] = useState<SORTING>(SORTING.NONE);
+    
+    const getRandomMockImage = () => {
+        const mockImages = [
+            IMAGE.MOCK_PLACE_1,
+            IMAGE.MOCK_PLACE_2,
+            IMAGE.MOCK_PLACE_3,
+            IMAGE.MOCK_PLACE_4,
+            IMAGE.MOCK_PLACE_5,
+            IMAGE.MOCK_PLACE_6,
+            IMAGE.MOCK_PLACE_7,
+        ];
+        const randomIndex = Math.floor(Math.random() * mockImages.length);
+        return mockImages[randomIndex];
+    };
+
+    const mockListFeatures = [
+        {
+            id: 1,
+            name: "Offer meals",
+            icon: <MdOutlineFastfood />
+        },
+        {
+            id: 2,
+            name: "Job agency",
+            icon: <GoBriefcase />
+        },
+        {
+            id: 3,
+            name: "Long term stay",
+            icon: <LuBuilding />
+        },
+        {
+            id: 4,
+            name: "Showers",
+            icon: <LuShowerHead />
+        },
+        {
+            id: 5,
+            name: "Laundry",
+            icon: <MdOutlineLocalLaundryService />
+        },
+        {
+            id: 6,
+            name: "Medical",
+            icon: <MdOutlineMedicalServices />
+        }
+    ]
+
     const [places, setPlaces] = useState<any[]>([
         {
             name: 'Place 1',
-            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
-            distance: '1.2km (xxx mins walk)',
+            image: getRandomMockImage(),
+            distance: '1.2km (10 mins walk)',
             rating: 4.5,
             address: 'Address 1, 3xxx, VIC',
             features: [1, 3, 2, 5, 6, 4]
         },
         {
             name: 'Place 2',
-            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
-            distance: '1.2km (xxx mins walk)',
+            image: getRandomMockImage(),
+            distance: '1.5km (15 mins walk)',
             rating: 4.2,
             address: 'Address 2, 3xxx, VIC',
             features: [2]
         },
         {
             name: 'Place 3',
-            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
-            distance: '1.2km (xxx mins walk)',
+            image: getRandomMockImage(),
+            distance: '1.8km (20 mins walk)',
             rating: 4.8,
             address: 'Address 3, 3xxx, VIC',
             features: [3]
         },
         {
             name: 'Place 4',
-            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
-            distance: '1.2km (xxx mins walk)',
+            image: getRandomMockImage(),
+            distance: '0.5km (5 mins walk)',
             rating: 4.9,
             address: 'Address 4, 3xxx, VIC',
             features: [1, 2]
         },
         {
             name: 'Place 5',
-            image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Example_image.svg/600px-Example_image.svg.png',
-            distance: '1.2km (xxx mins walk)',
+            image: getRandomMockImage(),
+            distance: '4.5km (45 mins walk)',
             rating: 4.7,
             address: 'Address 5, 3xxx, VIC',
             features: [2, 3]
@@ -80,39 +129,6 @@ function App() {
             setValue(SORTING.NONE);
         }
     };
-
-    const mockListFeatures = [
-        {
-            id: 1,
-            name: "Offer meals",
-            icon: <GiFoodTruck />
-        },
-        {
-            id: 2,
-            name: "Job agency",
-            icon: <GiFoodTruck />
-        },
-        {
-            id: 3,
-            name: "Long term stay",
-            icon: <GiFoodTruck />
-        },
-        {
-            id: 4,
-            name: "Showers",
-            icon: <GiFoodTruck />
-        },
-        {
-            id: 5,
-            name: "Laundry",
-            icon: <GiFoodTruck />
-        },
-        {
-            id: 6,
-            name: "Medical",
-            icon: <GiFoodTruck />
-        }
-    ]
 
     return (
         <Flex direction="column" gap={0}>
@@ -343,8 +359,9 @@ function App() {
                                                     wrap={'wrap'}
                                                     gap="0.5rem">
                                                     {(item, index) => (
-                                                        <Badge size='small' key={index} backgroundColor={COLOR.PRIMARY} color={COLOR.WHITE} borderRadius="0.5rem" >
-                                                            {item}
+                                                        <Badge size='small' key={index} backgroundColor={COLOR.PRIMARY} color={COLOR.WHITE} borderRadius="0.5rem">
+                                                            {mockListFeatures.find(feature => feature.name === item)?.icon}
+                                                            <Text color={'inherit'} marginLeft={'0.5rem'}>{item}</Text>
                                                         </Badge>
                                                     )}
                                                 </Collection>
