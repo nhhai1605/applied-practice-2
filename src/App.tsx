@@ -45,13 +45,165 @@ import {Geo} from '@aws-amplify/geo';
 import {CONFIG} from './constants/configuration';
 import Swal from 'sweetalert2';
 
+const defaultViewport = {latitude: 37.7749, longitude: -122.4194};
+
+const getRandomMockImage = () => {
+    const mockImages = [
+        IMAGE.MOCK_PLACE_1,
+        IMAGE.MOCK_PLACE_2,
+        IMAGE.MOCK_PLACE_3,
+        IMAGE.MOCK_PLACE_4,
+        IMAGE.MOCK_PLACE_5,
+        IMAGE.MOCK_PLACE_6,
+        IMAGE.MOCK_PLACE_7,
+    ];
+    const randomIndex = Math.floor(Math.random() * mockImages.length);
+    return mockImages[randomIndex];
+};
+
+const mockListFeatures = [
+    {
+        id: 1,
+        name: 'Offer meals',
+        icon: <MdOutlineFastfood />,
+    },
+    {
+        id: 2,
+        name: 'Job agency',
+        icon: <GoBriefcase />,
+    },
+    {
+        id: 3,
+        name: 'Long term stay',
+        icon: <LuBuilding />,
+    },
+    {
+        id: 4,
+        name: 'Showers',
+        icon: <LuShowerHead />,
+    },
+    {
+        id: 5,
+        name: 'Laundry',
+        icon: <MdOutlineLocalLaundryService />,
+    },
+    {
+        id: 6,
+        name: 'Medical',
+        icon: <MdOutlineMedicalServices />,
+    },
+];
+
+const getRandomOffset = (min: number, max: number) =>
+    (Math.random() * (max - min) + min) / 111000;
+
+const mockPlaces = [
+    {
+        id: 1,
+        type: FACILITY.SHELTER,
+        name: 'Place 1',
+        image: getRandomMockImage(),
+        distance: '1.2km (10 mins walk)',
+        rating: 4.5,
+        address: 'Address 1, 3xxx, VIC',
+        features: [1, 3, 2, 5, 6, 4],
+        latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
+        longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
+    },
+    {
+        id: 2,
+        type: FACILITY.FOOD_BANK,
+        name: 'Place 2',
+        image: getRandomMockImage(),
+        distance: '1.5km (15 mins walk)',
+        rating: 4.2,
+        address: 'Address 2, 3xxx, VIC',
+        features: [2],
+        latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
+        longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
+    },
+    {
+        id: 3,
+        type: FACILITY.MEDICAL,
+        name: 'Place 3',
+        image: getRandomMockImage(),
+        distance: '1.8km (20 mins walk)',
+        rating: 4.8,
+        address: 'Address 3, 3xxx, VIC',
+        features: [3],
+        latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
+        longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
+    },
+    {
+        id: 4,
+        type: FACILITY.MEDICAL,
+        name: 'Place 4',
+        image: getRandomMockImage(),
+        distance: '0.5km (5 mins walk)',
+        rating: 4.9,
+        address: 'Address 4, 3xxx, VIC',
+        features: [1, 2],
+        latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
+        longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
+    },
+    {
+        id: 5,
+        type: FACILITY.SHELTER,
+        name: 'Place 5',
+        image: getRandomMockImage(),
+        distance: '4.5km (45 mins walk)',
+        rating: 4.7,
+        address: 'Address 5, 3xxx, VIC',
+        features: [2, 3],
+        latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
+        longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
+    },
+    {
+        id: 6,
+        type: FACILITY.FOOD_BANK,
+        name: 'Place 6',
+        image: getRandomMockImage(),
+        distance: '2.5km (25 mins walk)',
+        rating: 4.3,
+        address: 'Address 6, 3xxx, VIC',
+        features: [1, 4, 5],
+        latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
+        longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
+    },
+    {
+        id: 7,
+        type: FACILITY.SHELTER,
+        name: 'Place 7',
+        image: getRandomMockImage(),
+        distance: '3.5km (35 mins walk)',
+        rating: 4.6,
+        address: 'Address 7, 3xxx, VIC',
+        features: [2, 3, 6],
+        latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
+        longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
+    },
+    {
+        id: 8,
+        type: FACILITY.MEDICAL,
+        name: 'Place 8',
+        image: getRandomMockImage(),
+        distance: '2.2km (22 mins walk)',
+        rating: 4.4,
+        address: 'Address 8, 3xxx, VIC',
+        features: [1, 3, 5],
+        latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
+        longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
+    },
+];
+
+
 function App() {
     const {tokens} = useTheme();
+    const [searchValue, setSearchValue] = useState<string>('');
     const [distanceSort, setDistanceSort] = useState<SORTING>(SORTING.NONE);
     const [ratingSort, setRatingSort] = useState<SORTING>(SORTING.NONE);
     const [selectedPlace, setSelectedPlace] = useState<any>(null);
     const [mapStyle, setMapStyle] = useState<any>(null);
-    const defaultViewport = {latitude: 37.7749, longitude: -122.4194};
     const [currentLocation, setCurrentLocation] =
         useState<any>(defaultViewport);
     const mapRef = useRef(null);
@@ -63,155 +215,8 @@ function App() {
         longitude: defaultViewport.longitude,
         zoom: 16,
     });
-
-    const getRandomMockImage = () => {
-        const mockImages = [
-            IMAGE.MOCK_PLACE_1,
-            IMAGE.MOCK_PLACE_2,
-            IMAGE.MOCK_PLACE_3,
-            IMAGE.MOCK_PLACE_4,
-            IMAGE.MOCK_PLACE_5,
-            IMAGE.MOCK_PLACE_6,
-            IMAGE.MOCK_PLACE_7,
-        ];
-        const randomIndex = Math.floor(Math.random() * mockImages.length);
-        return mockImages[randomIndex];
-    };
-
-    const mockListFeatures = [
-        {
-            id: 1,
-            name: 'Offer meals',
-            icon: <MdOutlineFastfood />,
-        },
-        {
-            id: 2,
-            name: 'Job agency',
-            icon: <GoBriefcase />,
-        },
-        {
-            id: 3,
-            name: 'Long term stay',
-            icon: <LuBuilding />,
-        },
-        {
-            id: 4,
-            name: 'Showers',
-            icon: <LuShowerHead />,
-        },
-        {
-            id: 5,
-            name: 'Laundry',
-            icon: <MdOutlineLocalLaundryService />,
-        },
-        {
-            id: 6,
-            name: 'Medical',
-            icon: <MdOutlineMedicalServices />,
-        },
-    ];
-
-    const getRandomOffset = (min: number, max: number) =>
-        (Math.random() * (max - min) + min) / 111000;
-
-    const [places, setPlaces] = useState<any[]>([
-        {
-            id: 1,
-            type: FACILITY.SHELTER,
-            name: 'Place 1',
-            image: getRandomMockImage(),
-            distance: '1.2km (10 mins walk)',
-            rating: 4.5,
-            address: 'Address 1, 3xxx, VIC',
-            features: [1, 3, 2, 5, 6, 4],
-            latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
-            longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
-        },
-        {
-            id: 2,
-            type: FACILITY.FOOD_BANK,
-            name: 'Place 2',
-            image: getRandomMockImage(),
-            distance: '1.5km (15 mins walk)',
-            rating: 4.2,
-            address: 'Address 2, 3xxx, VIC',
-            features: [2],
-            latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
-            longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
-        },
-        {
-            id: 3,
-            type: FACILITY.MEDICAL,
-            name: 'Place 3',
-            image: getRandomMockImage(),
-            distance: '1.8km (20 mins walk)',
-            rating: 4.8,
-            address: 'Address 3, 3xxx, VIC',
-            features: [3],
-            latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
-            longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
-        },
-        {
-            id: 4,
-            type: FACILITY.MEDICAL,
-            name: 'Place 4',
-            image: getRandomMockImage(),
-            distance: '0.5km (5 mins walk)',
-            rating: 4.9,
-            address: 'Address 4, 3xxx, VIC',
-            features: [1, 2],
-            latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
-            longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
-        },
-        {
-            id: 5,
-            type: FACILITY.SHELTER,
-            name: 'Place 5',
-            image: getRandomMockImage(),
-            distance: '4.5km (45 mins walk)',
-            rating: 4.7,
-            address: 'Address 5, 3xxx, VIC',
-            features: [2, 3],
-            latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
-            longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
-        },
-        {
-            id: 6,
-            type: FACILITY.FOOD_BANK,
-            name: 'Place 6',
-            image: getRandomMockImage(),
-            distance: '2.5km (25 mins walk)',
-            rating: 4.3,
-            address: 'Address 6, 3xxx, VIC',
-            features: [1, 4, 5],
-            latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
-            longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
-        },
-        {
-            id: 7,
-            type: FACILITY.SHELTER,
-            name: 'Place 7',
-            image: getRandomMockImage(),
-            distance: '3.5km (35 mins walk)',
-            rating: 4.6,
-            address: 'Address 7, 3xxx, VIC',
-            features: [2, 3, 6],
-            latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
-            longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
-        },
-        {
-            id: 8,
-            type: FACILITY.MEDICAL,
-            name: 'Place 8',
-            image: getRandomMockImage(),
-            distance: '2.2km (22 mins walk)',
-            rating: 4.4,
-            address: 'Address 8, 3xxx, VIC',
-            features: [1, 3, 5],
-            latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
-            longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
-        },
-    ]);
+    
+    const [places, setPlaces] = useState<any[]>(mockPlaces);
 
     const drawPlaceMarkers = useMemo(() => {
         return places.map(place => {
@@ -326,6 +331,20 @@ function App() {
     };
 
     useEffect(() => {
+        if (searchValue === '') {
+            setPlaces(mockPlaces);
+        } else {
+            setPlaces(
+                mockPlaces.filter(place =>
+                    place.name
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase()),
+                ),
+            );
+        }
+    }, [searchValue]);
+
+    useEffect(() => {
         initializeMap();
     }, []);
 
@@ -345,7 +364,17 @@ function App() {
                         borderRadius="1rem"
                         onClick={() => (window.location.href = '/')}
                     />
-                    <SearchField label="Search" placeholder="Search here..." />
+                    <SearchField
+                        label="Search"
+                        placeholder="Search here..."
+                        onChange={e => {
+                            setSearchValue(e.target.value);
+                        }}
+                        value={searchValue}
+                        onClear={() => {
+                            setSearchValue('');
+                        }}
+                    />
                 </Flex>
                 <Flex alignItems="center">
                     <Text
@@ -760,3 +789,76 @@ const style: any = {
         borderRadius: '0.5rem',
     },
 };
+
+// When query place, also join with the rate
+// Table Name: Place
+// Primary Key: PlaceID (unique identifier for each place)
+// Attributes:
+// Name: Name of the place (e.g., "Coffee Shop").
+// Address: Address of the place (e.g. 1xxx, Point Cook, 3030, VIC). ==> Just for display
+// Latitude: Latitude of the place.
+// Longitude: Longitude of the place.
+// Can use these 2 attributes: use this and update when add into the Rate table ==> may be faster when data is large and if the query is complex or usually query (our case)
+// Avg Ratings:
+// Total Ratings:
+
+// Table Name: Rate
+// Primary Key: RateID (unique identifier for each rate)
+// Attributes:
+// UserID: FK from User ===> Can allow rating from anonymous by use localStorage to track rated or not
+// PlaceID: FK from Place
+// Rating: 1 -> 5
+
+// UPDATE Place
+// SET
+//     AverageRating = (SELECT AVG(Rating) FROM Rate WHERE PlaceID = 1),
+//     TotalRatings = (SELECT COUNT(*) FROM Rate WHERE PlaceID = 1)
+// WHERE PlaceID = 1;
+
+// or CREATE INDEX if JOIN whenever query
+
+// CREATE INDEX idx_placeid_rate ON Rate (PlaceID);
+// CREATE INDEX idx_placeid_place ON Place (PlaceID);
+
+// const getSuburbBoundingBox = async (suburbName) => {
+//     try {
+//         const results = await Geo.searchByText(suburbName, {
+//             maxResults: 1, // Only get the first result
+//         });
+
+//         if (results.length > 0) {
+//             const boundingBox = results[0].boundingBox; // Get the bounding box
+//             return boundingBox; // { westLongitude, southLatitude, eastLongitude, northLatitude }
+//         } else {
+//             throw new Error('Suburb not found');
+//         }
+//     } catch (error) {
+//         console.error('Error geocoding suburb:', error);
+//         return null;
+//     }
+// };
+
+// // Search by bounding box, not by the address input ==> use the location search to get the suburb,
+// // then get the bounding box, then find places withing this bounding box
+// const getPlacesByBoundingBox = async (boundingBox) => {
+//     const { westLongitude, southLatitude, eastLongitude, northLatitude } = boundingBox;
+
+//     try {
+//         const params = {
+//             TableName: 'Places',
+//             FilterExpression: 'Latitude BETWEEN :south AND :north AND Longitude BETWEEN :west AND :east',
+//             ExpressionAttributeValues: {
+//                 ':south': southLatitude,
+//                 ':north': northLatitude,
+//                 ':west': westLongitude,
+//                 ':east': eastLongitude,
+//             },
+//         };
+
+//         const result = await dynamoDb.scan(params).promise();
+//         return result.Items; // List of places in the bounding box
+//     } catch (error) {
+//         console.error('Error querying places by bounding box:', error);
+//         return [];
+//     }
+// };
