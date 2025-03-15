@@ -37,6 +37,7 @@ import {FACILITY, SORTING} from './constants/enum';
 import {AiFillStar} from 'react-icons/ai';
 import {
     MdOutlineFastfood,
+    MdOutlineLocalGroceryStore,
     MdOutlineLocalLaundryService,
     MdOutlineMedicalServices,
 } from 'react-icons/md';
@@ -92,6 +93,11 @@ const mockListFeatures = [
         name: 'Medical',
         icon: <MdOutlineMedicalServices />,
     },
+    {
+        id: 7,
+        name: 'Offer supplies',
+        icon: <MdOutlineLocalGroceryStore  />,
+    },
 ];
 
 const getRandomOffset = (min: number, max: number) =>
@@ -106,7 +112,7 @@ const mockPlaces = [
         distance: '1.2km (10 mins walk)',
         rating: 4.5,
         address: 'Address 1, 3xxx, VIC',
-        features: [1, 3, 2, 5, 6, 4],
+        features: [1, 3, 2, 5, 6, 4, 7],
         latitude: defaultViewport.latitude + getRandomOffset(-500, 500),
         longitude: defaultViewport.longitude + getRandomOffset(-500, 500),
     },
