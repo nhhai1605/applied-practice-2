@@ -414,7 +414,7 @@ function App() {
                     backgroundColor={COLOR.WHITE}
                     variation="elevated">
                     {
-                        selectedPlace ? `Detail of ${selectedPlace.name}` : "Select a place to view details"
+                        selectedPlace ? `Detail of ${selectedPlace.name}` : "Map goes here. Select a place to see the route"
                     }
                 </Card>
             </Flex>
@@ -429,7 +429,7 @@ const style: any = {
         size: 'small',
         variation: 'primary',
         width: '7rem',
-        borderRadius: '0.5rem',
+        borderRadius: '0.25rem'
     },
     placeCard: {
         variation: 'elevated',
