@@ -27,6 +27,7 @@ function App() {
     const {tokens} = useTheme();
     const [distanceSort, setDistanceSort] = useState<SORTING>(SORTING.NONE);
     const [ratingSort, setRatingSort] = useState<SORTING>(SORTING.NONE);
+    const [selectedPlace, setSelectedPlace] = useState<any>(null);
     
     const getRandomMockImage = () => {
         const mockImages = [
@@ -116,6 +117,30 @@ function App() {
             address: 'Address 5, 3xxx, VIC',
             features: [2, 3]
         },
+        {
+            name: 'Place 6',
+            image: getRandomMockImage(),
+            distance: '2.5km (25 mins walk)',
+            rating: 4.3,
+            address: 'Address 6, 3xxx, VIC',
+            features: [1, 4, 5]
+        },
+        {
+            name: 'Place 7',
+            image: getRandomMockImage(),
+            distance: '3.5km (35 mins walk)',
+            rating: 4.6,
+            address: 'Address 7, 3xxx, VIC',
+            features: [2, 3, 6]
+        },
+        {
+            name: 'Place 8',
+            image: getRandomMockImage(),
+            distance: '2.2km (22 mins walk)',
+            rating: 4.4,
+            address: 'Address 8, 3xxx, VIC',
+            features: [1, 3, 5]
+        }
     ]);
 
     const controlSorting = (value: SORTING, setValue: any) => {
@@ -288,7 +313,14 @@ function App() {
                             gap="1rem"
                             wrap="wrap">
                             {(item, index) => (
-                                <Card key={index} {...style.placeCard}>
+                                <Card key={index} {...style.placeCard} onClick={()=>{
+                                    if(selectedPlace === item) {
+                                        setSelectedPlace(null);
+                                    }
+                                    else {
+                                        setSelectedPlace(item);
+                                    }
+                                }} backgroundColor={selectedPlace === item ? COLOR.SECONDARY : COLOR.WHITE}>
                                     <Flex
                                         direction={'row'}
                                         gap={'1rem'}
@@ -381,7 +413,9 @@ function App() {
                     margin="2rem 2rem 2rem 1rem"
                     backgroundColor={COLOR.WHITE}
                     variation="elevated">
-                    Map goes here
+                    {
+                        selectedPlace ? `Detail of ${selectedPlace.name}` : "Select a place to view details"
+                    }
                 </Card>
             </Flex>
         </Flex>
