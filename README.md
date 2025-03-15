@@ -1,5 +1,6 @@
-## Constants including image path, color, style, constants, etc. are stored in `src/constants` folder.
-## For icon: https://react-icons.github.io/react-icons/
+### Constants including image path, color, style, constants, etc. are stored in `src/constants` folder.
+### Input keys into `configuration.ts` file in `src/constants` folder for AWS Location Service (for now, if we use Amplify this will be changed).
+### For icon: https://react-icons.github.io/react-icons/
 
 ## Deploying to AWS
 
